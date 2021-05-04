@@ -26,7 +26,7 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
 
   injectCraDevServer(on, config);
-  //installCoverageTask(on, config);
+  installCoverageTask(on, config);
 
   return config;
 };
