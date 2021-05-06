@@ -1,10 +1,106 @@
-# Getting Started with Create React App
+# Create React App Example with Cypress Compoennt Testing
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Install Cypress CT
+
+### Install dependencies
+
+```bash
+yarn add -D cypress @cypress/react @cypress/webpack-dev-server
+```
+
+### Create the configuration files
+
+To setup any Cypress runner, the standard way is to create a `cypress.json` file at the root of your project. Checkout [the docs](https://docs.cypress.io/guides/references/configuration) to know the extend of your options.
+
+Here is the `cypress.json` file at work in this project:
+
+```js
+// cypress.json
+{
+  // Set this porperty to false to avoid cypress creating
+  // example `fixture` and `support` folders for fixtures and support files
+  // Remove the 2 lines if you are
+  "fixturesFolder": false,
+  // Tell Cypress how to recognize spec files
+  "testFiles": "**/*.test.jsx",
+  // All the component test files are
+  // located in this directory and its sub-directory
+  "componentFolder": "components"
+}
+```
+
+### Setup Cypress plugins
+
+For this step of the install process, create a `cypress/plugin/index.js` file.
+This file will let Cypress know how to start the testing server with your Nuxt configuration.
+
+```js
+/// <reference types="cypress" />
+const injectCraDevServer = require("@cypress/react/plugins/react-scripts");
+
+// This function is called when a project is opened or re-opened (e.g. due to
+// the project's config changing)
+
+/**
+ * @type {Cypress.PluginConfig}
+ */
+module.exports = (on, config) => {
+  // `on` is used to hook into various events Cypress emits
+  // `config` is the resolved Cypress config
+  injectCraDevServer(on, config);
+  return config;
+};
+```
+
+> NOTE: both the `on` handler function and the PluginConfig return something. Don't forget those returns.
+
+### Add testing library
+
+Install the library in your devDependencies
+
+```bash
+yarn add -D @testing-library/cypress
+```
+
+Then install it in cypress. Add this line to your `cypress/support/index.js` file:
+
+```js
+import "@testing-library/cypress/add-commands";
+```
+
+> NOTE: we choose to have this line in the `command.js` file to have a clearer idea of where things are. This file is imported in the `support/index.js`.
+
+### Add coverage
+
+Install necessary dependencies
+
+```bash
+yarn add -D @cypress/code-coverage @cypress/instrument-cra
+```
+
+Add the coverage task in the plugins by adding the two lines below
+
+```js
+const installCoverageTask = require("@cypress/code-coverage/task"); // one
+
+module.exports = (on, config) => {
+  installCoverageTask(on, config); // two
+};
+```
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `yarn cy`
+
+Opens an interactive cypress test runner with a list of the tests you can run and watch
+
+### `yarn cy:run`
+
+Runs all the component tests disovered and fails the command if a test fails (for CI)
 
 ### `yarn start`
 
